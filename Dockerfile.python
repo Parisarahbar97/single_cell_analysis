@@ -1,14 +1,10 @@
-FROM r-base:latest
+FROM python:3.8-slim
 
 # Set the working directory in the container
 WORKDIR /app
 
-# Install system dependencies
+# Install system dependencies for Python
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    libssl-dev \
-    libcurl4-openssl-dev \
-    libxml2-dev \
-    python3-pip \
     libfreetype6-dev \
     libpng-dev \
     libtiff5-dev \
@@ -18,12 +14,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     wget \
     git \
     build-essential \
-    python3 \
     && rm -rf /var/lib/apt/lists/*
-
-# Install R packages
-RUN R -e "install.packages(c('ggplot2', 'dplyr', 'readr', 'BiocManager', 'Seurat'), repos='http://cran.rstudio.com')" \
-    && R -e "BiocManager::install(c('DESeq2', 'limma', 'SingleCellExperiment'))"
 
 # Upgrade pip and install Python packages for scANVI / single-cell
 RUN pip3 install --upgrade pip && pip3 install --no-cache-dir \
@@ -42,6 +33,9 @@ RUN curl -s https://get.nextflow.io | bash && \
 
 # Install nf-core tools 
 RUN pip3 install nf-core
+
+# Expose port 8888 for Jupyter Notebook 
+EXPOSE 8888
 
 # Default command
 CMD ["bash"]
