@@ -3,20 +3,25 @@ FROM python:3.8-slim
 # Set the working directory in the container
 WORKDIR /app
 
-# Install system dependencies for Python
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    libfreetype6-dev \
-    libpng-dev \
-    libtiff5-dev \
-    libjpeg-dev \
-    openjdk-11-jdk-headless \
-    curl \
-    wget \
-    git \
-    build-essential \
-    && rm -rf /var/lib/apt/lists/*
+# Install system dependencies for Python including git
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        libfreetype6-dev \
+        libpng-dev \
+        libtiff5-dev \
+        libjpeg-dev \
+        openjdk-11-jdk-headless \
+        curl \
+        wget \
+        git \
+        build-essential && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
-# Upgrade pip and install Python packages for scANVI / single-cell
+# Clone a GitHub repository 
+RUN git clone https://github.com/Parisarahbar97/single_cell_analysis.git /app
+
+# Continue with the rest of your installation and setup steps
 RUN pip3 install --upgrade pip && pip3 install --no-cache-dir \
     scvi-tools \
     scanpy \
